@@ -10,26 +10,18 @@ void main()
 	
 	/*
 	///////////////lab 1
-	printf("\n\n====== lab 1 ====== \n");
-	int row_1;
-	printf("Enter the number of row : ");
-	scanf("%d",&row_1);
-				
-	int element_1;
-	printf("Enter the number of element : ");
-	scanf("%d",&element_1);
-				
+	
 	int  i_1,j_1;
-	int arr_1[row_1][element_1] ;	
+	int arr_1[3][4] ;	
 	//store
-	for(i_1=0 ; i_1<row_1 ; i_1++){
-		for(j_1=0 ; j_1<element_1 ; j_1++){
+	for(i_1=0 ; i_1<3 ; i_1++){
+		for(j_1=0 ; j_1<4 ; j_1++){
 				scanf("%d",&arr_1[i_1][j_1]);
 		}
 	}
 	//print
-	for(i_1=0 ; i_1<row_1 ; i_1++){
-		for(j_1=0 ; j_1<element_1 ; j_1++){
+	for(i_1=0 ; i_1<3 ; i_1++){
+		for(j_1=0 ; j_1<4 ; j_1++){
 			printf("%d ",arr_1[i_1][j_1]);
 		}
 		printf("\n");
@@ -56,15 +48,8 @@ void main()
 		}
 		printf("\n");
 	}
-	/*
-	static int a[2][2] = {1,2,3,4};
-	int i,j;
-	static int* p[]= {(int*)a,(int*)a+1,(int*)a+2};
-	for(i=0;i<2;i++){
-		for(j=0;j<2;j++){    
-			printf("%d %d %d %d \n",*(*(p+i)+j),*(*(j+p)+i),*(*(i+p)+j),*(*(p+j)+i));
-		}
-	}
+	
+	
 	*/
 	
 	/*
@@ -121,7 +106,7 @@ void main()
 	}
 	*/
 	
-	
+	/*
 	///////////////lab 5
 	printf("\n\n====== lab 5 ====== \n");
 	//add two array
@@ -144,7 +129,7 @@ void main()
 			}
 		printf("\n");
 	}
-		
+		*/
 
 
 
