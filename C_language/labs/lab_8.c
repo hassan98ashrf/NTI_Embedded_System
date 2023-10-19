@@ -206,7 +206,13 @@ void main(){
 				}
 				*/
 				
-				int arr_8[8]={1,2,3,5,7,10,5,12};
+				int arr_8[100];
+				printf("Entter number of array : ");
+				int n;
+				scanf("%d",&n);
+				for(i_8=0 ; i_8<n ; i_8++){
+					
+				}
 				int  i_8 ,count_even = 0 , count_odd = 0;	
 				for(i_8=0 ; i_8<8 ; i_8++){
 					if(arr_8[i_8] %2 == 0){
