@@ -15,8 +15,7 @@
 #include "stdint.h"
 #include "stdlib.h"
 #include "stdio.h"
-//#include "util/delay.h"
-
+#include <util/delay.h>
 
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 //============= Clock Macro ============
@@ -48,25 +47,18 @@ typedef struct DIO_t {
 }DIO_t;
 
 
-//SPI
-typedef struct SPI_t{
-	uint8_t SPCR;	//0x0D SPI Control Register
-	uint8_t SPSR;	//0x0E SPI Status Register
-	uint8_t SPDR;	//0x0F SPI Data Register is a read/write register
-}SPI_t;
-
-
 
 
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 //========= Peripheral Instants ========
 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-//GPIO
+//GPIO/
+/*
 #define PORTA		((struct GPIO_t*)(IO_Registers + 0x19))
 #define PORTB		((struct GPIO_t*)(IO_Registers + 0x16))
 #define PORTC		((struct GPIO_t *)(IO_Registers + 0x13))
 #define PORTD		((struct GPIO_t *)(IO_Registers + 0x10))
-
+*/
 
 
 
