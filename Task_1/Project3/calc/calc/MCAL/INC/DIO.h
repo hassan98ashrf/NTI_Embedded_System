@@ -9,74 +9,62 @@
 #ifndef DIO_H_
 #define DIO_H_
 
-#include "UTILS.h"
+#include "MEMmap.h"
+#include "STD.h"
+#include "stdint.h"
 
-typedef enum{
-	PINA0,
-	PINA1,
-	PINA2,
-	PINA3,
-	PINA4,
-	PINA5,
-	PINA6,
-	PINA7,
-	PINB0,
-	PINB1,
-	PINB2,
-	PINB3,
-	PINB4,
-	PINB5,
-	PINB6,
-	PINB7,
-	PINC0,
-	PINC1,
-	PINC2,
-	PINC3,
-	PINC4,
-	PINC5,
-	PINC6,
-	PINC7,
-	PIND0,
-	PIND1,
-	PIND2,
-	PIND3,
-	PIND4,
-	PIND5,
-	PIND6,
-	PIND7,
-	TOTAL_PINS
-}DIO_PinType;
+//pins Dir//////////////
+#define In 0
+#define OUT 1
 
+//portA PIN Dir
+#define DDRAPIN0 OUT
+#define DDRAPIN1 OUT
+#define DDRAPIN2 OUT
+#define DDRAPIN3 OUT
+#define DDRAPIN4 OUT
+#define DDRAPIN5 OUT
+#define DDRAPIN6 OUT
+#define DDRAPIN7 OUT
 
+//portB PIN Dir
+#define DDRBPIN0 OUT
+#define DDRBPIN1 OUT
+#define DDRBPIN2 OUT
+#define DDRBPIN3 OUT
+#define DDRBPIN4 OUT
+#define DDRBPIN5 OUT
+#define DDRBPIN6 OUT
+#define DDRBPIN7 OUT
 
-typedef enum{
-	OUTPUT,
-	INFREE,
-	INPULL
-}DIO_PinStatus;
+//portC PIN Dir
+#define DDRCPIN0 OUT
+#define DDRCPIN1 OUT
+#define DDRCPIN2 OUT
+#define DDRCPIN3 OUT
+#define DDRCPIN4 OUT
+#define DDRCPIN5 OUT
+#define DDRCPIN6 OUT
+#define DDRCPIN7 OUT
 
-typedef enum{
-	PA,
-	PB,
-	PC,
-	PD
-}DIO_PortType;
+//portD PIN Dir
+#define DDRDPIN0 OUT
+#define DDRDPIN1 OUT
+#define DDRDPIN2 OUT
+#define DDRDPIN3 In
+#define DDRDPIN4 OUT
+#define DDRDPIN5 In
+#define DDRDPIN6 In
+#define DDRDPIN7 In
 
 
-typedef enum{
-	LOW,
-	HIGH
-}DIO_VoltageType;
-
-void DIO_Init(void);
-DIO_VoltageType DIO_ReadPin (DIO_PinType pin);
-void DIO_WritePin (DIO_PinType pin,DIO_VoltageType volt);
-void DIO_TogglePin (DIO_PinType pin);
-void DIO_WritePort (DIO_PortType port ,uint8_t data);
-uint8_t  DIO_ReadPort (DIO_PortType port);
-void DIO_InitPin(DIO_PinType pin ,DIO_PinStatus status);
-extern const DIO_PinStatus DIO_PinsStatusArr[TOTAL_PINS];
-
+void DIO_init();
+void DIO_SetPinVal(uint8_t portName, uint8_t pinNum, uint8_t val);
+void DIO_SetPortVal(uint8_t portName, uint8_t val);
+uint8_t DIO_ReadPinVal(uint8_t portName, uint8_t pinNum);
+uint8_t DIO_ReadPortVal(uint8_t portName);
+void DIO_TogglePin(uint8_t portName, uint8_t pinNum);
+void DIO_EN_PULLUP(uint8_t portName, uint8_t pinNum);
 
 
 #endif /* DIO_H_ */

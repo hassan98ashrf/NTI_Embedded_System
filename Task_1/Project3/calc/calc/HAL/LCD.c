@@ -5,183 +5,132 @@
  *  Author: hassa
  */ 
 
-
-#include "DIO.h"
+#define F_CPU 8000000
+#include "util/delay.h"
 #include "LCD.h"
+#include "DIO.h"
 
-
-
-
-
-
-#if LCD_8_BIT ==1
- void WriteIns(uint8_t ins)
-{
-	DIO_WritePin(RS,LOW);
-	DIO_WritePort(LCD_PORT,ins);
-	DIO_WritePin(EN,HIGH);
-	_delay_ms(1);
-	DIO_WritePin(EN,LOW);
-	_delay_ms(1);
-}
- void WriteData(uint8_t data)
-{
-	DIO_WritePin(RS,HIGH);
-	DIO_WritePort(LCD_PORT,data);
-	DIO_WritePin(EN,HIGH);
-	_delay_ms(1);
-	DIO_WritePin(EN,LOW);
-	_delay_ms(1);
-}
-void LCD_Init(void)
-{
-	_delay_ms(35);
-	WriteIns(0x38);// set function
-	WriteIns(0x08);//0x0c  , 0x0e  courser enable
-	WriteIns(0x01);//clear
-	_delay_ms(1);
-	WriteIns(0x06);
-}
-#else
- void WriteIns(uint8_t ins)
-{
-	DIO_WritePin(RS,LOW);
-	DIO_WritePin(D7,READ_BIT(ins,7));
-	DIO_WritePin(D6,READ_BIT(ins,6));
-	DIO_WritePin(D5,READ_BIT(ins,5));
-	DIO_WritePin(D4,READ_BIT(ins,4));
-	DIO_WritePin(EN,HIGH);
-	_delay_ms(1);
-	DIO_WritePin(EN,LOW);
-	_delay_ms(1);
-	DIO_WritePin(D7,READ_BIT(ins,3));
-	DIO_WritePin(D6,READ_BIT(ins,2));
-	DIO_WritePin(D5,READ_BIT(ins,1));
-	DIO_WritePin(D4,READ_BIT(ins,0));
-	DIO_WritePin(EN,HIGH);
-	_delay_ms(1);
-	DIO_WritePin(EN,LOW);
-	_delay_ms(1);
-}
- void WriteData(uint8_t data)
-{
-	DIO_WritePin(RS,HIGH);
-	DIO_WritePin(D7,READ_BIT(data,7));
-	DIO_WritePin(D6,READ_BIT(data,6));
-	DIO_WritePin(D5,READ_BIT(data,5));
-	DIO_WritePin(D4,READ_BIT(data,4));
-	DIO_WritePin(EN,HIGH);
-	_delay_ms(1);
-	DIO_WritePin(EN,LOW);
-	_delay_ms(1);
-	DIO_WritePin(D7,READ_BIT(data,3));
-	DIO_WritePin(D6,READ_BIT(data,2));
-	DIO_WritePin(D5,READ_BIT(data,1));
-	DIO_WritePin(D4,READ_BIT(data,0));
-	DIO_WritePin(EN,HIGH);
-	_delay_ms(1);
-	DIO_WritePin(EN,LOW);
-	_delay_ms(1);
-}
-void LCD_Init(void)
-{
-	_delay_ms(35);
-	WriteIns(0x02);// set function
-	WriteIns(0x28);
-	WriteIns(0x0c);//0x0c  , 0x0e  cursor enable
-	WriteIns(0x01);//clear
-	_delay_ms(1);
-	WriteIns(0x06);
-}
-#endif
-
-void LCD_GoTo(uint8_t line,uint8_t cell)
-{
-	if (line ==1)
-	{
-		WriteIns(0x80+cell);
-
-	}
-	else if (line==2)
-	{
-		WriteIns(0xc0+cell);
-	}
-	else if (line==3)
-	{
-		WriteIns(0x94+cell);
-	}
-	else if (line==4)
-	{
-		WriteIns(0xd4+cell);
-	}
-	
-}
-
-void LCD_WriteChar(uint8_t ch)
-{
-	WriteData(ch);
-}
-
-void LCD_WriteString(char* str)
-{
-	uint8_t i=0;
-	for (i=0;str[i];i++)
-	{
-		WriteData(str[i]);
-	}
-}
-
-
-void LCD_WriteNumber(uint32_t num)
-{
-	uint8_t str[10],i;
-	
-	
-	if (num==0)
-	{
-		LCD_WriteChar('0');
-	}
-	else if (num<0)
-	{
-		LCD_WriteChar('-');
-		num = num*-1;
-	}
-	
-	for (i=0;num>0;i++)
-	{
-		str[i] = ((num%10)+'0');
-		num = num/10;
-	}
-	for (i=i-1;i!=255;i--)
-	{
-		LCD_WriteChar(str[i]);
-	}
-	
-}
-
-
-void LCD_CustomerChar(uint8_t address , uint8_t*character)
+void LCD_INIT()
 {
 	
-	WriteIns(0x40+(address*8));
-	
-	for(uint8_t i=0;i<8;i++)
-	{
-		WriteData(character[i]);
-	}
-	WriteIns(0x80);
+	_delay_ms(40);
+	LCD_instruction(0x33);
+	_delay_ms(1);
+	LCD_instruction(0x32);
+	_delay_ms(1);
+	LCD_instruction(FOUR_BIT_MODE);
+	_delay_ms(1);
+	LCD_instruction(0x0c);
+	_delay_ms(1);
+	LCD_instruction(CLEAR_DISPLAY);
+	_delay_ms(1);
+	LCD_instruction(RETURN_HOME); 
+	_delay_ms(1);
 }
 
-void LCD_Clear()
+void LCD_EN()
 {
-	WriteIns(0x01);
+	DIO_SetPinVal(ENPORT, ENPIN, HIGH);
 	_delay_ms(2);
-	WriteIns(0x80);
+	DIO_SetPinVal(ENPORT, ENPIN, LOW);
+	_delay_ms(2);
+}
+
+void LCD_instruction(unsigned char cmnd)
+{
+	
+	DIO_SetPinVal(RSPORT, RSPIN, 0);	
+	DIO_SetPinVal(LCD_PORT, LCD_D4, READ_BIT(cmnd,4));
+	DIO_SetPinVal(LCD_PORT, LCD_D5, READ_BIT(cmnd,5));
+	DIO_SetPinVal(LCD_PORT, LCD_D6, READ_BIT(cmnd,6));
+	DIO_SetPinVal(LCD_PORT, LCD_D7, READ_BIT(cmnd,7));
+	DIO_SetPinVal(ENPORT, ENPIN, 1);
+	_delay_ms(2);		
+	DIO_SetPinVal(ENPORT, ENPIN, 0);
+	_delay_ms(2);
+
+	DIO_SetPinVal(LCD_PORT, LCD_D4, READ_BIT(cmnd,0));
+	DIO_SetPinVal(LCD_PORT, LCD_D5, READ_BIT(cmnd,1));
+	DIO_SetPinVal(LCD_PORT, LCD_D6, READ_BIT(cmnd,2));
+	DIO_SetPinVal(LCD_PORT, LCD_D7, READ_BIT(cmnd,3));
+		
+	DIO_SetPinVal(ENPORT, ENPIN, 1);
+	_delay_ms(2);
+	DIO_SetPinVal(ENPORT, ENPIN, 0);
+	_delay_ms(2);
 	
 }
 
-void LCD_WriteNumber_u8(uint8_t num)//1:9
+void LCD_write_char(unsigned char data)
 {
-	LCD_Clear();
-	LCD_WriteChar('0'+num);
+	
+	DIO_SetPinVal(RSPORT, RSPIN, 1);
+	DIO_SetPinVal(LCD_PORT, LCD_D4, READ_BIT(data,4));
+	DIO_SetPinVal(LCD_PORT, LCD_D5, READ_BIT(data,5));
+	DIO_SetPinVal(LCD_PORT, LCD_D6, READ_BIT(data,6));
+	DIO_SetPinVal(LCD_PORT, LCD_D7, READ_BIT(data,7));
+	
+	DIO_SetPinVal(ENPORT, ENPIN, 1);
+	_delay_ms(2);
+	DIO_SetPinVal(ENPORT, ENPIN, 0);
+	_delay_ms(2);
+
+	
+	DIO_SetPinVal(LCD_PORT, LCD_D4, READ_BIT(data,0));
+	DIO_SetPinVal(LCD_PORT, LCD_D5, READ_BIT(data,1));
+	DIO_SetPinVal(LCD_PORT, LCD_D6, READ_BIT(data,2));
+	DIO_SetPinVal(LCD_PORT, LCD_D7, READ_BIT(data,3));
+	
+	DIO_SetPinVal(ENPORT, ENPIN, 1);
+	_delay_ms(2);
+	DIO_SetPinVal(ENPORT, ENPIN, 0);
+	_delay_ms(2);
+	
+}
+
+
+void LCD_SEND_STRING(char *data)
+{
+	while((*data)!='\0')
+	{
+		LCD_write_char(*data);
+		data++;
+	}
+}
+
+
+void LCD_CLR_SCREEN(void)
+{
+	LCD_instruction(CLEAR_DISPLAY);
+	_delay_ms(10);                    
+}
+
+
+void LCD_MOVE_CURSOR(unsigned char row , unsigned char column)
+{
+	
+	
+	unsigned char data = 0x80;
+	if(row>4||row<1||column>20||column<1)
+	{
+		data=0x80;                       
+	}
+	else if(row==1)
+	{
+		data=0x80+column-1 ;
+	}
+	else if (row==2)
+	{
+		data=0xc0+column-1;
+	}
+	else if (row==3)
+	{
+		data=0x94+column-1;
+	}
+	else if (row==4)
+	{
+		data=0xD4+column-1;
+	}
+	LCD_instruction(data);
+	_delay_ms(1);
 }

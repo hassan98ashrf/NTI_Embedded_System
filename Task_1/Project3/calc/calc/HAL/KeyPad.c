@@ -5,51 +5,69 @@
  *  Author: hassa
  */ 
 
-#include "KeyPad.h"
+
 #include "DIO.h"
+#include "KeyPad.h"
 
-uint8_t KeysArr[ROWS][COLS]={   {'+','=','0','C'},
-{'-','3','2','1'},
-{'*','6','5','4'},
-{'/','9','8','7'}   };
 
-void KEYPAD_Init(void)
+uint8_t arr[4][4] = { {'7','8','9','/'},  {'4','5','6','*'}, {'1','2','3','-'}, {'A','0','=','+'}};
+
+void KEYPAD_INIT()
 {
-	for (uint8_t r=0;r<ROWS;r++)
-	{
-		DIO_WritePin(FIRST_OUTPUT+r,HIGH);
-	}
+	DIO_EN_PULLUP(COLS_PORT, COL1);
+	DIO_EN_PULLUP(COLS_PORT, COL2);
+	DIO_EN_PULLUP(COLS_PORT, COL3);
+	DIO_EN_PULLUP(COLS_PORT, COL4);
 }
 
-uint8_t KEYPAD_GetKey(void)
+uint8_t KEYPAD_READ()
 {
-	uint8_t f,r,c,key=NO_KEY;
-	for (r=0;r<ROWS;r++)
+	uint8_t returnValue = 0xff; //NotPressed
+	uint8_t bitRead=1;
+	for(uint8_t row=0; row<4; row++)
 	{
-		DIO_WritePin(FIRST_OUTPUT+r,LOW);
-		f=0;
-		
-		for(c=0;c<COLS+1;c++)
+		DIO_SetPinVal(ROWS_PORT, ROW1, 1);
+		DIO_SetPinVal(ROWS_PORT, ROW2, 1);
+		DIO_SetPinVal(ROWS_PORT, ROW3, 1);
+		DIO_SetPinVal(ROWS_PORT, ROW4, 1);
+		switch (row)
 		{
-			if(c!=1)
-			{
-				
-				if (DIO_ReadPin(FIRST_INPUT+c)==LOW)
-				{
-					key=KeysArr[r][c-f];
-					_delay_ms(3);
-					while(DIO_ReadPin(FIRST_INPUT+c)==LOW);
-					_delay_ms(3);
-					
-				}
-			}
-			else
-			{
-				f=1;
-			}
+			case 0:
+				DIO_SetPinVal(ROWS_PORT, ROW1, 0);
+				break;
+			case 1:
+				DIO_SetPinVal(ROWS_PORT, ROW2, 0);
+				break;
+			case 2:
+				DIO_SetPinVal(ROWS_PORT, ROW3, 0);
+				break;
+			case 3:
+				DIO_SetPinVal(ROWS_PORT, ROW4, 0);
+				break;
 		}
-		DIO_WritePin(FIRST_OUTPUT+r,HIGH);
+		
+		for(uint8_t col=0; col<4; col++)
+		{
+			switch (col)
+			{
+				case 0:
+					bitRead = DIO_ReadPinVal(COLS_PORT, COL1);
+					break;
+				case 1:
+					bitRead = DIO_ReadPinVal(COLS_PORT, COL2);
+					break;
+				case 2:
+					bitRead = DIO_ReadPinVal(COLS_PORT, COL3);
+					break;
+				case 3:
+					bitRead = DIO_ReadPinVal(COLS_PORT, COL4);
+					break;
+			}
+			if(bitRead == 0) {returnValue = arr[row][col]; break;}
+		}
+		if(bitRead == 0) {break;}
 	}
-	return key;
+	
+	
+	return returnValue;
 }
-

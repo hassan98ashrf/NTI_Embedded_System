@@ -6,27 +6,18 @@
  */ 
 
 
-#include "UTILS.h"
+
 #include "DIO.h"
-#include "LCD.h"
-#include "KeyPad.h"
-
-#define NO_PRESSED_KEY 0xFF
-
-
-uint8_t key = NO_PRESSED_KEY;
+#include "CALC.h"
 
 int main()
 {
-	DIO_Init();
-	DIO_Init();
-	LCD_Init();
-	
+	Calc_init();
 	
 	while(1)
 	{
-		key = KEYPAD_GetKey();
-		LCD_WriteChar(key);
+		Calculator(); 
+		_delay_ms(250);
 	}
 	
 }
